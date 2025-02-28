@@ -63,6 +63,18 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        /* Added styles for position indicator */
+        .position-indicator {
+            position: fixed;
+            bottom: 60px;
+            right: 20px;
+            background-color: rgba(0, 123, 255, 0.8);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            z-index: 100;
+            display: none;
+        }
     </style>
 </head>
 
@@ -127,6 +139,11 @@
         </div>
     </div>
 
+    <!-- Added position indicator -->
+    <div id="position-indicator" class="position-indicator">
+        Returning to position...
+    </div>
+
     <footer>
         <div class="container">
             <div class="row">
@@ -178,6 +195,40 @@
                 currentIndex = (currentIndex + 1) % rotateWords.length;
             }, 2000);
             
+            // Position tracking variables
+            let lastViewedPosition = parseInt(localStorage.getItem('lastViewedPosition')) || 0;
+            const positionIndicator = document.getElementById('position-indicator');
+            
+            // Check if we need to restore position
+            if (lastViewedPosition > 0) {
+                // Show the position indicator
+                positionIndicator.style.display = 'block';
+                
+                // Wait for images to load before scrolling
+                window.addEventListener('load', function() {
+                    setTimeout(() => {
+                        // Scroll to the last viewed position
+                        window.scrollTo({
+                            top: lastViewedPosition,
+                            behavior: 'smooth'
+                        });
+                        
+                        // Hide the indicator after scrolling
+                        setTimeout(() => {
+                            positionIndicator.style.display = 'none';
+                        }, 2000);
+                    }, 1000);
+                });
+            }
+            
+            // Track scroll position continuously
+            window.addEventListener('scroll', function() {
+                // Only update when actively scrolling (not when automatically scrolling)
+                if (!positionIndicator.style.display || positionIndicator.style.display === 'none') {
+                    localStorage.setItem('lastViewedPosition', window.scrollY);
+                }
+            });
+            
             // Check if image exists with better error handling and debug logging
             function checkImageExists(url) {
                 return new Promise((resolve) => {
@@ -212,6 +263,27 @@
                 });
             }
             
+            // Function to trigger actual download
+            function downloadImage(url, filename) {
+                // Save current scroll position before download
+                localStorage.setItem('lastViewedPosition', window.scrollY);
+                
+                // Create a temporary anchor element
+                const downloadLink = document.createElement('a');
+                downloadLink.href = url;
+                downloadLink.download = filename || url.split('/').pop();
+                downloadLink.style.display = 'none';
+                document.body.appendChild(downloadLink);
+                
+                // Trigger the download
+                downloadLink.click();
+                
+                // Clean up
+                setTimeout(() => {
+                    document.body.removeChild(downloadLink);
+                }, 100);
+            }
+            
             // Create image card
             function createImageCard(imagePath) {
                 const colDiv = document.createElement("div");
@@ -236,19 +308,21 @@
                     const errorDiv = document.createElement("div");
                     errorDiv.className = "error-message";
                     errorDiv.textContent = "Image failed to load";
-                    cardDiv.insertBefore(errorDiv, downloadLink);
+                    cardDiv.insertBefore(errorDiv, downloadButton);
                 };
-                
-                const downloadLink = document.createElement("a");
-                downloadLink.href = imagePath;
-                downloadLink.download = imagePath.split("/").pop();
                 
                 const downloadButton = document.createElement("button");
                 downloadButton.textContent = "DOWNLOAD";
-                downloadLink.appendChild(downloadButton);
+                downloadButton.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // Get the filename from the image path
+                    const filename = imagePath.split('/').pop();
+                    // Trigger download
+                    downloadImage(imagePath, filename);
+                });
                 
                 cardDiv.appendChild(img);
-                cardDiv.appendChild(downloadLink);
+                cardDiv.appendChild(downloadButton);
                 colDiv.appendChild(cardDiv);
                 gallery.appendChild(colDiv);
                 
