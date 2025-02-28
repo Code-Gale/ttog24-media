@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Homepage</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/sidebar.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link href='https://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,300,700" rel='stylesheet' type='text/css'>
+    <link rel='shortcut icon' type='image/x-icon' href='favicon.ico' />
+    <script src="js/jquery-1.11.3.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jPushMenu.js"></script>
+    <script src="js/counter.js"></script>
+    <script src="js/jquery.scrollUp.min.js"></script>
+    <style>
+        .card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #fff;
+            text-align: center;
+        }
+        .card img {
+            width: 100%;
+            border-radius: 10px;
+        }
+        .card button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin-top: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .card button:hover {
+            background-color: #0056b3;
+        }
+        #loading {
+            padding: 20px;
+            font-size: 18px;
+            color: #666;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            margin: 10px auto;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <div class="top-heading">
+            <div class="container">
+                <div class="contact-info pull-left">
+                    <a href="#"><span class="fa fa-phone"></span>TOMTOM OF GALA - SEASON 14</a>
+                </div>
+                <ul class="social-icons pull-right">
+                    <li><a href="#" class="icon fa fa-facebook"></a></li>
+                    <li><a href="#" class="icon fa fa-twitter"></a></li>
+                    <li><a href="#" class="icon fa fa-pinterest-p"></a></li>
+                    <li><a href="#" class="icon fa fa-google-plus"></a></li>
+                </ul>
+            </div>
+        </div>
+        <nav class="navbar-default navbar-static-top" id="navbar-default" style="border-radius:0;">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle toggle-menu menu-left push-body" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href=""></a>
+                </div>
+                <div class="collapse navbar-collapse cbp-spmenu cbp-spmenu-vertical cbp-spmenu-left" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav">
+                        <li><a href="index.html"><span>Home</span></a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="banner">
+        <div class="opacity_overlay">
+            <div class="info">
+                <h2>TomTom Of Gala (T.T.O.G)</h2>
+                <h2>Season 12</h2>
+                <hr>
+                <h3>The image gallery</h3>
+                <h3>To download your beauties.</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="services">
+        <div class="container">
+            <h2>Below is the <span id="rotate">complete</span> gallery of all pictures taken at the T.T.O.G event.</h2>
+            <h3>The Sunrise Media and Tech departments have collated the images taken at the T.T.O.G event and made them accessible for download.</h3>
+            <div class="row" id="gallery">
+                <div id="loading" class="text-center col-xs-12">
+                    <p>Loading images... Please wait.</p>
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <p>&copy; 2025 TomTom Of Gala. All rights reserved.</p>
+                </div>
+                <div class="col-md-6 text-right">
+                    <p>Powered by Sunrise Media and Tech</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        $(document).ready(function() {
+            // Initialize menu
+            $('.toggle-menu').jPushMenu();
+
+            // Initialize scroll to top button
+            $.scrollUp({
+                scrollName: 'scrollUp',
+                scrollDistance: 300,
+                scrollFrom: 'top',
+                scrollSpeed: 300,
+                easingType: 'linear',
+                animation: 'fade',
+                animationInSpeed: 200,
+                animationOutSpeed: 200,
+                scrollText: '<i class="fa fa-chevron-up"></i>',
+                zIndex: 100
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const totalImages = 900;
+            const extensions = ["jpg", "JPG", "jpeg", "JPEG", "PNG", "png"];
+            const gallery = document.getElementById("gallery");
+            const batchSize = 10; // Reduced batch size for better reliability
+            let loadedImages = 0;
+            let failedImages = 0;
+            
+            // Add rotating text functionality
+            const rotateElement = document.getElementById("rotate");
+            const rotateWords = ["complete", "beautiful", "exclusive"];
+            let currentIndex = 0;
+            
+            setInterval(() => {
+                rotateElement.textContent = rotateWords[currentIndex];
+                currentIndex = (currentIndex + 1) % rotateWords.length;
+            }, 2000);
+            
+            // Check if image exists with better error handling and debug logging
+            function checkImageExists(url) {
+                return new Promise((resolve) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        console.log(`Found image: ${url}`);
+                        resolve(true);
+                    };
+                    img.onerror = () => {
+                        console.log(`Image not found: ${url}`);
+                        resolve(false);
+                    };
+                    // Set a timeout in case the image load hangs
+                    const timeoutId = setTimeout(() => {
+                        console.log(`Timeout loading: ${url}`);
+                        resolve(false);
+                    }, 5000);
+                    
+                    // Clear timeout if image loads or errors out before timeout
+                    img.onload = () => {
+                        clearTimeout(timeoutId);
+                        console.log(`Found image: ${url}`);
+                        resolve(true);
+                    };
+                    img.onerror = () => {
+                        clearTimeout(timeoutId);
+                        console.log(`Image not found: ${url}`);
+                        resolve(false);
+                    };
+                    
+                    img.src = url;
+                });
+            }
+            
+            // Create image card
+            function createImageCard(imagePath) {
+                const colDiv = document.createElement("div");
+                colDiv.className = "col-md-4 col-sm-6";
+                
+                const cardDiv = document.createElement("div");
+                cardDiv.className = "card";
+                
+                const img = document.createElement("img");
+                img.src = imagePath;
+                img.className = "img-responsive";
+                img.alt = "Gala Event Image";
+                
+                // Add loading indicator and error handling for card images
+                img.onload = function() {
+                    // Remove loading class when image is loaded
+                    cardDiv.classList.remove("loading");
+                };
+                img.onerror = function() {
+                    // If image fails to load in the card, show error message
+                    img.style.display = "none";
+                    const errorDiv = document.createElement("div");
+                    errorDiv.className = "error-message";
+                    errorDiv.textContent = "Image failed to load";
+                    cardDiv.insertBefore(errorDiv, downloadLink);
+                };
+                
+                const downloadLink = document.createElement("a");
+                downloadLink.href = imagePath;
+                downloadLink.download = imagePath.split("/").pop();
+                
+                const downloadButton = document.createElement("button");
+                downloadButton.textContent = "DOWNLOAD";
+                downloadLink.appendChild(downloadButton);
+                
+                cardDiv.appendChild(img);
+                cardDiv.appendChild(downloadLink);
+                colDiv.appendChild(cardDiv);
+                gallery.appendChild(colDiv);
+                
+                loadedImages++;
+                updateLoadingStatus();
+            }
+            
+            // Update loading status
+            function updateLoadingStatus() {
+                const loadingElement = document.getElementById('loading');
+                if (loadingElement) {
+                    if (loadedImages > 0) {
+                        loadingElement.querySelector('p').textContent = 
+                            `Loaded ${loadedImages} of ${totalImages} images... (${failedImages} failed)`;
+                    }
+                    
+                    // Only remove loading indicator when all images are accounted for
+                    if (loadedImages + failedImages >= totalImages) {
+                        setTimeout(() => {
+                            loadingElement.remove();
+                        }, 1000);
+                    }
+                }
+            }
+            
+            // Try to load an image with any of the supported extensions
+            async function tryLoadImageWithExtensions(imageNumber) {
+                for (const ext of extensions) {
+                    const path = `images/image${imageNumber}.${ext}`;
+                    try {
+                        const exists = await checkImageExists(path);
+                        if (exists) {
+                            createImageCard(path);
+                            return true;
+                        }
+                    } catch (error) {
+                        console.error(`Error checking ${path}:`, error);
+                    }
+                }
+                
+                // If we get here, the image wasn't found with any extension
+                failedImages++;
+                updateLoadingStatus();
+                console.log(`Image ${imageNumber} not found with any supported extension`);
+                return false;
+            }
+            
+            // Process a single batch of images
+            async function processBatch(startNumber, endNumber) {
+                const promises = [];
+                
+                for (let i = startNumber; i <= endNumber; i++) {
+                    // Wrap in an immediately invoked async function to ensure proper error handling
+                    promises.push((async () => {
+                        try {
+                            return await tryLoadImageWithExtensions(i);
+                        } catch (error) {
+                            console.error(`Error processing image ${i}:`, error);
+                            failedImages++;
+                            updateLoadingStatus();
+                            return false;
+                        }
+                    })());
+                }
+                
+                try {
+                    await Promise.all(promises);
+                } catch (error) {
+                    console.error("Error in batch processing:", error);
+                }
+                
+                // Process next batch if more images remain
+                if (endNumber < totalImages) {
+                    // Small delay between batches to reduce browser load
+                    setTimeout(() => {
+                        const nextStart = endNumber + 1;
+                        const nextEnd = Math.min(nextStart + batchSize - 1, totalImages);
+                        processBatch(nextStart, nextEnd);
+                    }, 200);
+                }
+            }
+            
+            // Start processing the first batch
+            const firstBatchEnd = Math.min(batchSize, totalImages);
+            processBatch(1, firstBatchEnd);
+        });
+    </script>
+</body>
+</html>
